@@ -1,6 +1,6 @@
 # AnySound
 
-Converte vídeos (MP4, MKV, AVI, MOV, WEBM...) em áudio: **MP3, WAV, FLAC, OGG, M4A, OPUS**.
+Converte vídeos (MP4, MKV, AVI, MOV, WEBM, MPEG-TS .ts/.m2ts/.mts...) em áudio: **MP3, WAV, FLAC, OGG, M4A, OPUS**.
 Um único `AnySound.exe` — sem instalação; o FFmpeg já vem embutido.
 
 ## Como usar

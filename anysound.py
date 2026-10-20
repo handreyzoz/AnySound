@@ -20,7 +20,8 @@ FORMATS = {
 BITRATES = ["320k", "256k", "192k", "128k", "96k"]
 LOSSLESS = {"wav", "flac"}
 VIDEO_TYPES = [
-    ("Vídeos", "*.mp4 *.mkv *.avi *.mov *.webm *.flv *.wmv *.m4v *.mpg *.mpeg *.3gp *.ts"),
+    ("Vídeos", "*.mp4 *.mkv *.avi *.mov *.webm *.flv *.wmv *.m4v *.mpg *.mpeg *.3gp *.ts *.m2ts *.mts *.m2t *.tsv *.trp"),
+    ("MPEG-TS", "*.ts *.m2ts *.mts *.m2t *.tsv *.trp"),
     ("Todos os arquivos", "*.*"),
 ]
 NO_WINDOW = 0x08000000 if sys.platform == "win32" else 0
@@ -133,7 +134,8 @@ class App(tk.Tk):
         self.after(0, lambda: self.finish(errors))
 
     def convert(self, src, dest, fmt, index, total):
-        cmd = [ffmpeg_exe(), "-y", "-hide_banner", "-i", src, "-vn", *FORMATS[fmt]]
+        cmd = [ffmpeg_exe(), "-y", "-hide_banner", "-fflags", "+genpts+discardcorrupt",
+               "-i", src, "-vn", "-sn", "-dn", "-map", "0:a:0", *FORMATS[fmt]]
         if fmt not in LOSSLESS:
             cmd += ["-b:a", self.bitrate.get()]
         cmd.append(dest)
