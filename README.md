@@ -1,0 +1,16 @@
+# AnySound
+
+Converte vídeos (MP4, MKV, AVI, MOV, WEBM...) em áudio: **MP3, WAV, FLAC, OGG, M4A, OPUS**.
+Um único `AnySound.exe` — sem instalação; o FFmpeg já vem embutido.
+
+## Como usar
+1. Abra o `AnySound.exe`.
+2. Clique em **Adicionar vídeos...** (vários de uma vez).
+3. Escolha o formato e a qualidade.
+4. Clique em **Converter**. Os áudios ficam na pasta do vídeo (ou na pasta escolhida).
+
+## Baixar o .exe
+Cada push gera o executável pelo GitHub Actions: aba **Actions → Build AnySound.exe → Artifacts → AnySound**.
+
+## Gerar localmente (Windows)
+Com Python 3.9+ instalado, rode `build.bat`. O executável sai em `dist\AnySound.exe`.
