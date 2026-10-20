@@ -9,6 +9,12 @@ from tkinter import filedialog, messagebox, ttk
 
 import imageio_ffmpeg
 
+try:
+    from tkinterdnd2 import DND_FILES, TkinterDnD
+    BaseTk = TkinterDnD.Tk
+except ImportError:
+    DND_FILES, BaseTk = None, tk.Tk
+
 FORMATS = {
     "mp3": ["-c:a", "libmp3lame"],
     "wav": ["-c:a", "pcm_s16le"],
@@ -24,6 +30,7 @@ VIDEO_TYPES = [
     ("MPEG-TS", "*.ts *.m2ts *.mts *.m2t *.tsv *.trp"),
     ("Todos os arquivos", "*.*"),
 ]
+VIDEO_EXTS = {"." + e.lstrip("*.") for e in VIDEO_TYPES[0][1].split()}
 NO_WINDOW = 0x08000000 if sys.platform == "win32" else 0
 
 
@@ -36,7 +43,7 @@ def parse_time(text):
     return int(h) * 3600 + int(m) * 60 + float(s)
 
 
-class App(tk.Tk):
+class App(BaseTk):
     def __init__(self):
         super().__init__()
         self.title("AnySound - Vídeo para Áudio")
@@ -56,6 +63,11 @@ class App(tk.Tk):
 
         self.listbox = tk.Listbox(self, selectmode="extended")
         self.listbox.pack(fill="both", expand=True, **pad)
+        if DND_FILES:
+            self.listbox.insert("end", "Arraste vídeos ou pastas para cá...")
+            self.listbox.itemconfigure(0, foreground="gray")
+            self.drop_target_register(DND_FILES)
+            self.dnd_bind("<<Drop>>", self.on_drop)
 
         opts = ttk.Frame(self)
         opts.pack(fill="x", **pad)
@@ -84,11 +96,30 @@ class App(tk.Tk):
     def update_bitrate(self):
         self.br_box.configure(state="disabled" if self.fmt.get() in LOSSLESS else "readonly")
 
-    def add_files(self):
-        for f in filedialog.askopenfilenames(title="Escolha os vídeos", filetypes=VIDEO_TYPES):
+    def add_paths(self, paths):
+        if self.busy:
+            return
+        if not self.files:
+            self.listbox.delete(0, "end")
+        for f in paths:
+            f = os.path.normpath(f)
             if f not in self.files:
                 self.files.append(f)
                 self.listbox.insert("end", f)
+
+    def add_files(self):
+        self.add_paths(filedialog.askopenfilenames(title="Escolha os vídeos", filetypes=VIDEO_TYPES))
+
+    def on_drop(self, event):
+        found = []
+        for p in self.tk.splitlist(event.data):
+            if os.path.isdir(p):
+                for root, _, names in os.walk(p):
+                    found += [os.path.join(root, n) for n in sorted(names)
+                              if os.path.splitext(n)[1].lower() in VIDEO_EXTS]
+            elif os.path.isfile(p):
+                found.append(p)
+        self.add_paths(found)
 
     def clear(self):
         if not self.busy:

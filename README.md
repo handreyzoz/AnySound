@@ -5,7 +5,7 @@ Um único `AnySound.exe` — sem instalação; o FFmpeg já vem embutido.
 
 ## Como usar
 1. Abra o `AnySound.exe`.
-2. Clique em **Adicionar vídeos...** (vários de uma vez).
+2. Clique em **Adicionar vídeos...** (vários de uma vez) ou arraste vídeos e pastas para a janela.
 3. Escolha o formato e a qualidade.
 4. Clique em **Converter**. Os áudios ficam na pasta do vídeo (ou na pasta escolhida).
 
