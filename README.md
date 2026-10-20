@@ -13,4 +13,4 @@ Um único `AnySound.exe` — sem instalação; o FFmpeg já vem embutido.
 Cada push gera o executável pelo GitHub Actions: aba **Actions → Build AnySound.exe → Artifacts → AnySound**.
 
 ## Gerar localmente (Windows)
-Com Python 3.9+ instalado, rode `build.bat`. O executável sai em `dist\AnySound.exe`.
+Com Python 3.9+ instalado, dê dois cliques no `build.bat` (ou, no PowerShell, rode `.\build.bat`). O executável sai em `dist\AnySound.exe`.
