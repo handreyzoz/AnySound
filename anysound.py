@@ -25,6 +25,16 @@ FORMATS = {
 }
 BITRATES = ["320k", "256k", "192k", "128k", "96k"]
 LOSSLESS = {"wav", "flac"}
+# Equalização de vozes: normalizador dinâmico (aproxima locutores/distâncias),
+# compressor (suaviza picos), normalização de loudness (EBU R128) e limitador.
+VOICE_LEVELER = ",".join([
+    "highpass=f=70",
+    "dynaudnorm=f=150:g=11:p=0.9:m=30",
+    "acompressor=threshold=-21dB:ratio=3:attack=15:release=250:makeup=2dB",
+    "loudnorm=I=-16:TP=-1.5:LRA=7",
+    "alimiter=limit=0.84:attack=5:release=50:level=disabled",
+    "aresample=48000",
+])
 VIDEO_TYPES = [
     ("Vídeos", "*.mp4 *.mkv *.avi *.mov *.webm *.flv *.wmv *.m4v *.mpg *.mpeg *.3gp *.ts *.m2ts *.mts *.m2t *.tsv *.trp"),
     ("MPEG-TS", "*.ts *.m2ts *.mts *.m2t *.tsv *.trp"),
@@ -53,6 +63,7 @@ class App(BaseTk):
         self.outdir = tk.StringVar(value="")
         self.fmt = tk.StringVar(value="mp3")
         self.bitrate = tk.StringVar(value="192k")
+        self.level = tk.BooleanVar(value=False)
         self.busy = False
 
         pad = {"padx": 10, "pady": 5}
@@ -78,6 +89,9 @@ class App(BaseTk):
         ttk.Label(opts, text="Qualidade:").pack(side="left", padx=(15, 0))
         self.br_box = ttk.Combobox(opts, textvariable=self.bitrate, values=BITRATES, state="readonly", width=6)
         self.br_box.pack(side="left", padx=5)
+        ttk.Checkbutton(self, variable=self.level,
+                        text="Equalizar volume das vozes (compressor + normalizador + limitador)"
+                        ).pack(anchor="w", padx=10)
 
         out = ttk.Frame(self)
         out.pack(fill="x", **pad)
@@ -167,6 +181,8 @@ class App(BaseTk):
     def convert(self, src, dest, fmt, index, total):
         cmd = [ffmpeg_exe(), "-y", "-hide_banner", "-fflags", "+genpts+discardcorrupt",
                "-i", src, "-vn", "-sn", "-dn", "-map", "0:a:0", *FORMATS[fmt]]
+        if self.level.get():
+            cmd += ["-af", VOICE_LEVELER]
         if fmt not in LOSSLESS:
             cmd += ["-b:a", self.bitrate.get()]
         cmd.append(dest)
