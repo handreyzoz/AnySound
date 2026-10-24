@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>User.ButtonBoxETS2</AssemblyName>
+    <RootNamespace>ButtonBoxETS2</RootNamespace>
+    <!-- Pasta de instalação do SimHub. Ajuste se instalou em outro lugar. -->
+    <SimHubDir Condition="'$(SimHubDir)' == ''">C:\Program Files (x86)\SimHub</SimHubDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="SimHub.Plugins">
+      <HintPath>$(SimHubDir)\SimHub.Plugins.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="GameReaderCommon">
+      <HintPath>$(SimHubDir)\GameReaderCommon.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Copia a DLL para a pasta do SimHub depois de compilar (precisa do Visual Studio aberto como administrador). -->
+  <Target Name="CopiarParaSimHub" AfterTargets="Build">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(SimHubDir)" ContinueOnError="true" />
+  </Target>
+
+</Project>
